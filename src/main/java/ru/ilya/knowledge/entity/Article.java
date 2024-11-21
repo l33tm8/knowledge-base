@@ -1,5 +1,6 @@
 package ru.ilya.knowledge.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,5 +22,6 @@ public class Article {
     private User author;
 
     @ManyToOne
+    @Nullable
     private Article parent;
 }

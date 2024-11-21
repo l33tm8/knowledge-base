@@ -1,6 +1,7 @@
 package ru.ilya.knowledge.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Builder
+@AllArgsConstructor
 public class User implements UserDetails {
 
     public User() {

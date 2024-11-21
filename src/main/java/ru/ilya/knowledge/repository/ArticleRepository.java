@@ -7,6 +7,8 @@ import ru.ilya.knowledge.entity.Article;
 import java.util.List;
 
 @Repository
-public interface ArticleRepository extends CrudRepository<Article, Integer> {
+public interface ArticleRepository extends CrudRepository<Article, Long> {
+    List<Article> findByParentId(Long parentId);
     List<Article> findByParent(Article parent);
+    boolean ExistsById(Long id);
 }
