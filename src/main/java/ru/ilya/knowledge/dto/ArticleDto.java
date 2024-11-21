@@ -11,7 +11,8 @@ public class ArticleDto {
         this.title = article.getTitle();
         this.content = article.getContent();
         this.author = article.getAuthor().getUsername();
-        this.parentId = article.getParent().getId();
+        if (article.getParent() != null)
+            this.parentId = article.getParent().getId();
     }
     private Long id;
     private String title;
