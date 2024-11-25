@@ -10,5 +10,4 @@ import java.util.List;
 public interface ArticleRepository extends CrudRepository<Article, Long> {
     List<Article> findByParentId(Long parentId);
     List<Article> findByParent(Article parent);
-    boolean ExistsById(Long id);
 }
