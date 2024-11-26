@@ -1,6 +1,7 @@
 package ru.ilya.knowledge.dto;
 
 import lombok.Data;
+import ru.ilya.knowledge.entity.ChangeStatus;
 
 import java.util.Map;
 
@@ -12,5 +13,6 @@ public class ChangeWithDifferences {
    private Map<Integer, String> deletions;
    private String oldContent;
    private String newContent;
+   private ChangeStatus status;
 
 }

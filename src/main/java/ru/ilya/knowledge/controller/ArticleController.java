@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.ilya.knowledge.dto.ArticleDto;
 import ru.ilya.knowledge.dto.ArticleWithTitleDto;
+import ru.ilya.knowledge.dto.ChangeWithDifferences;
 import ru.ilya.knowledge.service.ArticleService;
+import ru.ilya.knowledge.service.ChangeService;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-
+    private final ChangeService changeService;
 
     @GetMapping("/parent/{id}")
     public List<ArticleWithTitleDto> findByParent(@PathVariable Long id) {
@@ -32,7 +34,7 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
-    public ArticleDto update(@PathVariable Long id, @RequestBody ArticleDto articleDto) {
+    public ChangeWithDifferences update(@PathVariable Long id, @RequestBody ArticleDto articleDto) {
         return articleService.update(id, articleDto);
     }
 
@@ -40,5 +42,10 @@ public class ArticleController {
     public ResponseEntity<String> delete(@PathVariable Long id) {
         articleService.delete(id);
         return ResponseEntity.ok("Article deleted");
+    }
+
+    @GetMapping("/{id}/changes")
+    public List<ChangeWithDifferences> findChanges(@PathVariable Long id) {
+        return changeService.getChangesOfArticle(id);
     }
 }

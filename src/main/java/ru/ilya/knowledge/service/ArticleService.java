@@ -1,13 +1,18 @@
 package ru.ilya.knowledge.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.ilya.knowledge.dto.ArticleDto;
 import ru.ilya.knowledge.dto.ArticleWithTitleDto;
+import ru.ilya.knowledge.dto.ChangeDto;
+import ru.ilya.knowledge.dto.ChangeWithDifferences;
 import ru.ilya.knowledge.entity.Article;
+import ru.ilya.knowledge.entity.ChangeStatus;
 import ru.ilya.knowledge.entity.User;
 import ru.ilya.knowledge.exception.NotFoundException;
 import ru.ilya.knowledge.repository.ArticleRepository;
+import ru.ilya.knowledge.repository.ChangeRepository;
 
 import java.util.List;
 
@@ -15,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final ChangeService changeService;
     private final UserService userService;
 
     public List<ArticleWithTitleDto> findByParent(Long parentId) {
@@ -35,6 +41,7 @@ public class ArticleService {
         return new ArticleDto(article);
     }
 
+    @Transactional
     public ArticleDto create(ArticleDto articleDto) {
         User user = userService.getCurrentUser();
         Long parentId = articleDto.getParentId();
@@ -49,21 +56,32 @@ public class ArticleService {
         return new ArticleDto(savedArticle);
     }
 
-    public ArticleDto update(Long id, ArticleDto articleDto) {
+    @Transactional
+    public ChangeWithDifferences update(Long id, ArticleDto articleDto) {
         Article article = articleRepository.findById(id).orElse(null);
         if (article == null)
             throw new NotFoundException("Article not found");
-        if (articleDto.getTitle() != null) {
+        if (articleDto.getContent() != null && !articleDto.getContent().equals(article.getContent())) {
+            ChangeDto changeDto = new ChangeDto();
+            changeDto.setArticleId(article.getId());
+            changeDto.setNewContent(articleDto.getContent());
+            changeDto.setOldContent(article.getContent());
+            changeDto.setStatus(ChangeStatus.IN_REVIEW);
+            ChangeWithDifferences changeWithDifferences =  changeService.create(changeDto);
+            changeWithDifferences.setArticleId(article.getId());
+            changeWithDifferences.setStatus(ChangeStatus.IN_REVIEW);
+            return changeWithDifferences;
+        }
+        if (articleDto.getTitle() != null && !articleDto.getTitle().equals(article.getTitle())) {
             article.setTitle(articleDto.getTitle());
         }
-        if (articleDto.getContent() != null) {
-            article.setContent(articleDto.getContent());
-        }
-
         articleRepository.save(article);
-        return new ArticleDto(article);
-    }
+        ChangeWithDifferences changeWithDifferences = new ChangeWithDifferences();
+        changeWithDifferences.setArticleId(article.getId());
 
+        return changeWithDifferences;
+    }
+    @Transactional
     public void delete(Long id) {
         articleRepository.deleteById(id);
     }
