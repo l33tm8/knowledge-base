@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminAspect {
     @Before("@annotation(ru.ilya.knowledge.aop.AdminRequired)")
-    public void checkAdmin() throws Throwable {
+    public void checkAdmin() throws AccessDeniedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new AccessDeniedException("Access denied");

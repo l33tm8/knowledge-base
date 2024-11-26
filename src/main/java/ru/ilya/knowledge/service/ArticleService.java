@@ -12,7 +12,6 @@ import ru.ilya.knowledge.entity.ChangeStatus;
 import ru.ilya.knowledge.entity.User;
 import ru.ilya.knowledge.exception.NotFoundException;
 import ru.ilya.knowledge.repository.ArticleRepository;
-import ru.ilya.knowledge.repository.ChangeRepository;
 
 import java.util.List;
 
