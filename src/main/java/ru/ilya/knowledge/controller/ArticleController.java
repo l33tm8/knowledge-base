@@ -3,9 +3,7 @@ package ru.ilya.knowledge.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.ilya.knowledge.dto.ArticleDto;
-import ru.ilya.knowledge.dto.ArticleWithTitleDto;
-import ru.ilya.knowledge.dto.ChangeWithDifferences;
+import ru.ilya.knowledge.dto.*;
 import ru.ilya.knowledge.service.ArticleService;
 import ru.ilya.knowledge.service.ChangeService;
 
@@ -23,19 +21,24 @@ public class ArticleController {
         return articleService.findByParent(id);
     }
 
+    @GetMapping("/root")
+    public List<ArticleWithTitleDto> findRootArticles() {
+        return articleService.findByParent(null);
+    }
+
     @GetMapping("/{id}")
     public ArticleDto findById(@PathVariable Long id) {
         return articleService.findById(id);
     }
 
     @PostMapping
-    public ArticleDto create(@RequestBody ArticleDto articleDto) {
-        return articleService.create(articleDto);
+    public ArticleDto create(@RequestBody ArticleCreateDto articleCreateDto) {
+        return articleService.create(articleCreateDto);
     }
 
     @PutMapping("/{id}")
-    public ChangeWithDifferences update(@PathVariable Long id, @RequestBody ArticleDto articleDto) {
-        return articleService.update(id, articleDto);
+    public ChangeWithDifferences update(@PathVariable Long id, @RequestBody ArticleEditDto articleEditDto) {
+        return articleService.update(id, articleEditDto);
     }
 
     @DeleteMapping("/{id}")

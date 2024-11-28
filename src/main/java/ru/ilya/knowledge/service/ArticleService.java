@@ -3,10 +3,7 @@ package ru.ilya.knowledge.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.ilya.knowledge.dto.ArticleDto;
-import ru.ilya.knowledge.dto.ArticleWithTitleDto;
-import ru.ilya.knowledge.dto.ChangeDto;
-import ru.ilya.knowledge.dto.ChangeWithDifferences;
+import ru.ilya.knowledge.dto.*;
 import ru.ilya.knowledge.entity.Article;
 import ru.ilya.knowledge.entity.ChangeStatus;
 import ru.ilya.knowledge.entity.User;
@@ -41,13 +38,14 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleDto create(ArticleDto articleDto) {
+    public ArticleDto create(ArticleCreateDto articleDto) {
         User user = userService.getCurrentUser();
         Long parentId = articleDto.getParentId();
         if (parentId != null && !articleRepository.existsById(parentId))
             throw new NotFoundException("Parent not found");
         Article article = new Article();
         article.setTitle(articleDto.getTitle());
+        article.setContent(articleDto.getContent());
         article.setAuthor(user);
         if (parentId != null)
             article.setParent(articleRepository.findById(parentId).orElse(null));
@@ -56,7 +54,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public ChangeWithDifferences update(Long id, ArticleDto articleDto) {
+    public ChangeWithDifferences update(Long id, ArticleEditDto articleDto) {
         Article article = articleRepository.findById(id).orElse(null);
         if (article == null)
             throw new NotFoundException("Article not found");
@@ -68,6 +66,8 @@ public class ArticleService {
             changeDto.setStatus(ChangeStatus.IN_REVIEW);
             ChangeWithDifferences changeWithDifferences =  changeService.create(changeDto);
             changeWithDifferences.setArticleId(article.getId());
+            changeWithDifferences.setNewContent(articleDto.getContent());
+            changeWithDifferences.setOldContent(article.getContent());
             changeWithDifferences.setStatus(ChangeStatus.IN_REVIEW);
             return changeWithDifferences;
         }

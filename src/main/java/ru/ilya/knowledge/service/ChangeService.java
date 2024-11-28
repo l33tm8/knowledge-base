@@ -43,6 +43,8 @@ public class ChangeService {
                     changeWithDifferences.setId(change.getId());
                     changeWithDifferences.setArticleId(change.getArticle().getId());
                     changeWithDifferences.setStatus(change.getStatus());
+                    changeWithDifferences.setNewContent(change.getNewContent());
+                    changeWithDifferences.setOldContent(change.getOldContent());
 
                     return changeWithDifferences;
                 })
